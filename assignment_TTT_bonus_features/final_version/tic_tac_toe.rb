@@ -7,6 +7,7 @@ COMPUTER_MARKER = 'O'
 PLAYER = 'player'
 COMPUTER = 'computer'
 CHOOSE = 'choose'
+WIN_SCORE = 5
 # Change constant to either 'computer', 'player', or
 # leave it as 'choose' and the user will be prompted for selection.
 # simply select [0] for computer, [1] player and [2] to have the
@@ -100,8 +101,6 @@ end
 def find_at_risk_square(line, board, marker)
   if board.values_at(*line).count(marker) == 2
     board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-  else
-    nil
   end
 end
 
@@ -155,7 +154,7 @@ def detect_winner(brd)
 end
 
 def five_games_won_by_player_or_computer?(score_board)
-  if score_board[:player] >= 5 || score_board[:computer] >= 5
+  if score_board[:player] >= WIN_SCORE || score_board[:computer] >= WIN_SCORE
     true
   else
     false
@@ -163,8 +162,13 @@ def five_games_won_by_player_or_computer?(score_board)
 end
 
 def ask_player_who_should_go_first
-  puts "Would you like to go first? (y or n)"
-  reply = gets.chomp.downcase
+  reply = ''
+  loop do
+    puts "Would you like to go first? (y or n)"
+    reply = gets.chomp.downcase
+    break if reply == 'y' || reply == 'n'
+    puts "you entered #{reply} - please enter 'y' or 'n'"
+  end
   reply.start_with?('y') ? PLAYER : COMPUTER
 end
 
@@ -191,14 +195,14 @@ loop do
   introduce_new_game
 
   loop do
-    case FIRST_MOVE_CHOICES
-    when CHOOSE
-      current_player = ask_player_who_should_go_first
-    when COMPUTER
-      current_player = COMPUTER
-    else
-      current_player = PLAYER
-    end
+    current_player =  case FIRST_MOVE_CHOICES
+                      when CHOOSE
+                        ask_player_who_should_go_first
+                      when COMPUTER
+                        COMPUTER
+                      else
+                        PLAYER
+                      end
 
     loop do
       display_board(board, score)
