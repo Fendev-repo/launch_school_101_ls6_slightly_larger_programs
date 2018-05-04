@@ -1,4 +1,3 @@
-require 'pry-byebug'
 require_relative 'presentation_and_io_to_terminal'
 # NO_ALT is used to indicate where non-Ace cards do not have
 # an alternative value.
@@ -10,13 +9,13 @@ end
 
 # rubocop:disable Style/AlignArray:
 def card_variants
-  [['two',  2,  '2 '], ['three', 3, '3 '],
-  ['four',  4,  '4 '], ['five',  5, '5 '],
-  ['six',   6,  '6 '], ['seven', 7, '7 '],
-  ['eight', 8,  '8 '], ['nine',  9, '9 '],
-  ['ten',   10, '10'], ['jack', 10, 'J '],
+  [['two', 2, '2 '], ['three', 3, '3 '],
+  ['four',  4, '4 '], ['five',  5, '5 '],
+  ['six',   6, '6 '], ['seven', 7, '7 '],
+  ['eight', 8, '8 '], ['nine', 9, '9 '],
+  ['ten', 10, '10'], ['jack', 10, 'J '],
   ['queen', 10, 'Q '], ['king', 10, 'K '],
-  ['ace',   1,  'A ']]
+  ['ace', 1,  'A ']]
 end
 # rubocop:enable Style/AlignArray:
 

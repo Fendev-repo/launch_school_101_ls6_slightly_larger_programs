@@ -1,4 +1,3 @@
-require 'pry-byebug'
 require_relative 'game_logic'
 require_relative 'presentation_and_io_to_terminal'
 require_relative 'cards'
@@ -15,7 +14,7 @@ loop do
   game_status = game_status_record
   players_choice = ''
 
-  # Deal the first two cards - and present to the player
+  # Deal the first 2 cards - and present to the player
   deal_first_cards!(active_deck, player_hand, dealer_hand)
   update_game_status!(game_status, player_hand, dealer_hand)
   present_hands(player_hand, dealer_hand, game_status, game_count)
@@ -40,7 +39,7 @@ loop do
 
   if players_choice == STAY && game_status[:player_hand] <= MAX_HAND_VALUE
     loop do
-      break if dealers_first_two_cards_win?(game_status)
+      break if dealers_first_2_cards_win?(game_status)
 
       dealers_turn_to_choose(active_deck, dealer_hand, game_status)
       sleep_for(1) # Makes it feel like the dealer is thinking..
@@ -58,9 +57,9 @@ loop do
   game_status[:show_all_hands] = true
   update_game_status!(game_status, player_hand, dealer_hand)
   present_hands(player_hand, dealer_hand, game_status, game_count)
-  break unless someone_has_won_five_games?(game_count)
+  break unless someone_has_won_5_games?(game_count)
   sleep_for(3)
 end
-prompt "Thanks for playing the five rounds of #{MAX_HAND_VALUE}"
+prompt "Thanks for playing the 5 rounds of #{MAX_HAND_VALUE}"
 prompt ""
 prompt ""

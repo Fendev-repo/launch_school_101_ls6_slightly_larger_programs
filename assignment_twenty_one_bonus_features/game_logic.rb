@@ -1,18 +1,9 @@
-require 'pry-byebug'
 require_relative 'presentation_and_io_to_terminal'
 require_relative 'cards'
-ALT_ACE_VALUE = 11
-TEN = 10
-ONE = 1
-ZERO = 0
-TWO = 2
-TWENTY = 20
-NINE = 9
-ELEVEN = 11
 MAX_HAND_VALUE = 21
-FIVE = 5
 HIT = 'h'
 STAY = 's'
+WINNING_SCORE = 5
 
 def sleep_for(num_secs)
   sleep(num_secs)
@@ -38,23 +29,23 @@ def update_game_won_count(game_count, game_status)
   status = game_status[:current_game_status]
 
   if dealer_score > player_score && dealer_score <= MAX_HAND_VALUE
-    game_count[:dealer_wins] += ONE
+    game_count[:dealer_wins] += 1
   elsif status.include?('busted') && dealer_score <= MAX_HAND_VALUE
-    game_count[:dealer_wins] += ONE
+    game_count[:dealer_wins] += 1
   elsif player_score > dealer_score && player_score <= MAX_HAND_VALUE
-    game_count[:player_wins] += ONE
+    game_count[:player_wins] += 1
   elsif player_score <= MAX_HAND_VALUE && dealer_score > MAX_HAND_VALUE
-    game_count[:player_wins] += ONE
+    game_count[:player_wins] += 1
   end
 end
 # rubocop:enable Metrics/PerceivedComplexity:
 # rubocop:enable Metrics/AbcSize:
 # rubocop:enable Metrics/CyclomaticComplexity:
 
-def someone_has_won_five_games?(game_count)
-  if game_count[:player_wins] >= FIVE
+def someone_has_won_5_games?(game_count)
+  if game_count[:player_wins] >= WINNING_SCORE
     false
-  elsif game_count[:dealer_wins] >= FIVE
+  elsif game_count[:dealer_wins] >= WINNING_SCORE
     false
   else
     true
@@ -62,16 +53,16 @@ def someone_has_won_five_games?(game_count)
 end
 
 def create_players_hand
-  { show_card_one:   nil,
-    show_card_two:   nil,
+  { show_card_1:   nil,
+    show_card_2:   nil,
     hit_cards:       [],
     hand_sum_total:  nil,
     player:          true }
 end
 
 def create_dealers_hand
-  { show_card_one:  nil,
-    show_card_two:  nil,
+  { show_card_1:  nil,
+    show_card_2:  nil,
     hit_cards:      [],
     hand_sum_total: nil,
     dealer:         true }
@@ -93,9 +84,9 @@ def this_an_ace?(card)
 end
 
 def add_show_cards_values_together(hand)
-  card_one_value = hand[:show_card_one][:numeric_value]
-  card_two_value = hand[:show_card_two][:numeric_value]
-  card_one_value + card_two_value
+  card_1_value = hand[:show_card_1][:numeric_value]
+  card_2_value = hand[:show_card_2][:numeric_value]
+  card_1_value + card_2_value
 end
 
 def total_up_hit_card_values(hand)
@@ -119,7 +110,6 @@ def hand_busted?(game_status)
   else
     false
   end
-  game_status
 end
 
 def update_hands(hand, grand_total, game_status)
@@ -137,9 +127,9 @@ def total_up_hand_for_best_option(hand, game_status)
   hit_card_total = total_up_hit_card_values(hand)
   grand_total = show_card_totals + hit_card_total
   aces_in_hand = how_many_aces_does_hand_have?(hand)
-  # Cacluate best hand option - if hand includes one or
+  # Cacluate best hand option - if hand includes 1 or
   # more aces.
-  if aces_in_hand > ZERO
+  if aces_in_hand > 0
     grand_total = add_up_total_with_aces(grand_total)
   end
   # Update game status and participant hand, with best hand values
@@ -149,16 +139,16 @@ end
 
 def add_up_total_with_aces(grand_total)
   # Add 10, as the ace is already counted and included as 1.
-  if grand_total + TEN <= MAX_HAND_VALUE
-    grand_total += TEN
+  if grand_total + 10 <= MAX_HAND_VALUE
+    grand_total += 10
   end
   grand_total
 end
 
 def how_many_aces_does_hand_have?(hand)
   num_of_aces = 0
-  num_of_aces += 1 if this_an_ace?(hand[:show_card_one])
-  num_of_aces += 1 if this_an_ace?(hand[:show_card_two])
+  num_of_aces += 1 if this_an_ace?(hand[:show_card_1])
+  num_of_aces += 1 if this_an_ace?(hand[:show_card_2])
   hand[:hit_cards].each do |item|
     num_of_aces += 1 if this_an_ace?(item)
   end
@@ -195,32 +185,8 @@ def update_game_status!(game_status, player_hand, dealer_hand)
   game_status
 end
 
-def user_wants_to_play_another_round?
-  prompt ''
-  prompt ' => Would you care for another game? (y or n)'
-  reply = gets.chomp.downcase
-  unless reply == 'y' || reply == 'n'
-    prompt "You entered #{reply} - please type either 'y' or 'n'"
-    reply = gets.chomp.downcase
-  end
-  clear_cli if reply == 'y'
-  reply == 'y' ? true : false
-end
-
-def user_ready_for_next_round?
-  prompt ''
-  prompt ' => Are you ready for the next round? (y or n)'
-  reply = gets.chomp.downcase
-  unless reply == 'y' || reply == 'n'
-    prompt "You entered #{reply} - please type either 'y' or 'n'"
-    reply = gets.chomp.downcase
-  end
-  clear_cli if reply == 'y'
-  reply == 'y' ? false : true
-end
-
 def player_has_stayed?(players_choice)
-  players_choice == 's' ? true : false
+  players_choice == 's'
 end
 
 def player_busted?(player_hand, game_status)
@@ -233,7 +199,7 @@ def dealer_has_busted?(dealer_hand, game_status)
   game_status[:dealer_hand] > MAX_HAND_VALUE
 end
 
-def dealers_first_two_cards_win?(game_status)
+def dealers_first_2_cards_win?(game_status)
   dealers_hand = game_status[:dealer_hand]
   players_hand = game_status[:dealer_hand]
   if dealers_hand > players_hand
@@ -286,27 +252,27 @@ def deal_next_card(deck, hand)
 end
 
 def deal_first_cards!(active_deck, player, dealer)
-  select_two_cards_from_active_deck!(active_deck, player)
-  select_two_cards_from_active_deck!(active_deck, dealer)
+  select_2_cards_from_active_deck!(active_deck, player)
+  select_2_cards_from_active_deck!(active_deck, dealer)
 end
 
-def select_two_cards_from_active_deck!(deck, participant)
-  participant[:show_card_one] = choose_random_card!(deck)
-  participant[:show_card_two] = choose_random_card!(deck)
+def select_2_cards_from_active_deck!(deck, participant)
+  participant[:show_card_1] = choose_random_card!(deck)
+  participant[:show_card_2] = choose_random_card!(deck)
 end
 
 def dealers_turn_to_choose(active_deck, dealer_hand, game_status)
   player  = game_status[:player_hand]
   dealer  = game_status[:dealer_hand]
 
-  if player && dealer == TWENTY
+  if player && dealer == 20
     game_status[:current_game_status] = 'dealer_stays - game is a draw'
   elsif player >= dealer && dealer < MAX_HAND_VALUE
     deal_next_card(active_deck, dealer_hand)
   end
 end
 
-def dealer_is_busted_or_has_beaten_player?(game_status)
+def dealer_is_busted_or_has_bea10_player?(game_status)
   player  = game_status[:player_hand]
   dealer  = game_status[:dealer_hand]
   dealer > MAX_HAND_VALUE || dealer > player ? true : false

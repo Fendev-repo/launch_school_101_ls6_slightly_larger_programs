@@ -1,5 +1,3 @@
-require 'pry-byebug'
-require_relative 'game_logic'
 require_relative 'game_logic'
 
 def prompt(msg)
@@ -9,7 +7,7 @@ end
 def welcome_user_to_the_game
   clear_cli
   prompt ""
-  prompt "   Let's Play Twenty-one!"
+  prompt "   Let's Play #{MAX_HAND_VALUE}!"
 end
 
 def show_card_images
@@ -34,10 +32,10 @@ end
 # rubocop:disable Metrics/MethodLength:
 # rubocop:disable Lint/UselessAssignment:
 def show_dealer_cards(dlr_first_hand, game_status)
-  c1_pic  = dlr_first_hand[:show_card_one][:picture]
-  c1_name = dlr_first_hand[:show_card_one][:name]
-  c2_pic  = dlr_first_hand[:show_card_two][:picture]
-  c2_name = dlr_first_hand[:show_card_two][:name]
+  c1_pic  = dlr_first_hand[:show_card_1][:picture]
+  c1_name = dlr_first_hand[:show_card_1][:name]
+  c2_pic  = dlr_first_hand[:show_card_2][:picture]
+  c2_name = dlr_first_hand[:show_card_2][:name]
   hits    = dlr_first_hand[:hit_cards].map { |n| n[:name] }
   dealer_hand_total = game_status[:dealer_hand]
 
@@ -47,7 +45,7 @@ def show_dealer_cards(dlr_first_hand, game_status)
   end
 
   prompt "***** Dealers Cards *****"
-  prompt "Here are the dealers first two cards"
+  prompt "Here are the dealers first 2 cards"
   prompt "First card  => #{c1_name}"
   prompt "Second card => Dealer to know, you to find out.."
   prompt "+-----+   +-----+"
@@ -71,10 +69,10 @@ def game_score_board(game_count)
 end
 
 def show_players_cards(plyr_first_hand)
-  c1_pic  = plyr_first_hand[:show_card_one][:picture]
-  c1_name = plyr_first_hand[:show_card_one][:name]
-  c2_pic  = plyr_first_hand[:show_card_two][:picture]
-  c2_name = plyr_first_hand[:show_card_two][:name]
+  c1_pic  = plyr_first_hand[:show_card_1][:picture]
+  c1_name = plyr_first_hand[:show_card_1][:name]
+  c2_pic  = plyr_first_hand[:show_card_2][:picture]
+  c2_name = plyr_first_hand[:show_card_2][:name]
   hits    = plyr_first_hand[:hit_cards].map { |n| n[:name] }
   player_hand_total = plyr_first_hand[:hand_sum_total]
 
